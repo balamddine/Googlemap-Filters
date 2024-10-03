@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Google Maps Example</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800;900&display=swap"
+    rel="stylesheet" />
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHCZL8-tj4nbu4e9LSmY4J8vIvYwIz_nw&callback=initMap"
+    async defer></script>
+
+
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      margin: 0px;
+      padding: 0px;
+      ;
+    }
+
+    ::placeholder,
+    ::-webkit-input-placeholder,
+    body,
+    html,
+    input,
+    textarea,
+    select,
+    button {
+      font: 14px 'Open Sans', 'tahoma', verdana, arial, sans-serif;
+      color: #000;
+    }
+
+    header {
+      background-color: #e7fff5c4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+    }
+
+    header h1 {
+      color: #00B16A;
+      font-weight: 800;
+      font-size: 26px ! Important;
+      line-height: 80px;
+      margin: 0px;
+      padding: 0px;
+    }
+
+    #map {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    .nav-left {
+      position: fixed;
+      top: 0px;
+      left: 0px;
+      z-index: 1000;
+      width: 50px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .row {
+      position: relative;
+      width: 100%;
+    }
+
+    .col {
+      background-color: rgba(255, 255, 255, 1);
+      display: flex;
+      align-items: center;
+      justify-items: center;
+      position: relative;
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .row .col:nth-child(1) {
+      margin-top: -5px;
+    }
+
+
+
+    .bg-skew {
+      -webkit-transform: skew(0deg, -10deg);
+      transform: skew(0deg, -10deg);
+      z-index: 100;
+    }
+
+    .bg-skew.icon {
+      -webkit-transform: skew(0deg, 10deg);
+      transform: skew(0deg, 10deg);
+    }
+
+    .pv15 {
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+
+    .con,
+    .cov {
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+
+    .btn {
+      cursor: pointer;
+      color: #00b26b;
+      font-size: 24px;
+    }
+
+    .btn.active {
+      background-color: #008d54;
+    }
+
+    .btn:hover,
+    .btn.active {
+      background-color: #00b26b;
+      color: white;
+    }
+
+    .line {
+      background-color: #00b26b;
+      width: 2px;
+      height: 92%;
+      position: absolute;
+      left: 50%;
+      top: 18px;
+    }
+
+    .f-grow {
+      flex-grow: 1;
+    }
+    
+
+    .gm-style .gm-style-iw-tc::after {
+        background-color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .gm-style .gm-style-iw-c {
+        background-color: rgba(255, 255, 255, 0.8) !important;
+        border-radius: 0px;
+        padding: 0px !important;
+        box-shadow: 0 2px 7px 1px #aabc9add !important;
+        height: 450px !important;
+        max-height: 450px !important;
+        min-width: 300px !important;      
+    }
+
+
+    .gm-style .gm-style-iw-d {
+        overflow: hidden !important;
+        max-height: none !important;
+    }
+
+    .gm-style .gm-style-iw-c button {
+        z-index: 111;
+        width: auto !important;
+        height: auto !important;
+        padding: 0px !important;
+        opacity: 1 !important;
+        top: 0px !important;
+        right: 0px !important;
+        background-color: transparent !important;
+        /* color: #008d54 !important; */
+    }
+
+    .gm-style .gm-style-iw-c button span {
+        background-color: #008d54 !important;
+    }
+
+
+
+    .marker-cluster-small {
+        background-color: rgba(181, 226, 140, 0.6);
+    }
+
+    .marker-cluster-small div {
+        background-color: rgba(110, 204, 57, 0.6);
+    }
+
+    .marker-cluster-medium {
+        background-color: rgba(241, 211, 87, 0.6);
+    }
+
+    .marker-cluster-medium div {
+        background-color: rgba(240, 194, 12, 0.6);
+    }
+
+    .marker-cluster-large {
+        background-color: rgba(253, 156, 115, 0.6);
+    }
+
+    .marker-cluster-large div {
+        background-color: rgba(241, 128, 23, 0.6);
+    }
+    .content{
+      padding: 10px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <header>
+    <h1>Canada's Zero Emission Vehicle Supply Chain Map</h1>
+  </header>
+  <nav class="nav-left">
+    <div class="row">
+      <div class="col bg-skew pv15 btn active" onclick="clearZoom()">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em"
+            viewBox="0 0 24 24" data-icon="mdi:home" class="cc c iconify fs24 iconify--mdi">
+            <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"></path>
+          </svg>
+        </div>
+
+      </div>
+      <div class="col bg-skew pv15 btn" onclick="zoomIn()">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em"
+            viewBox="0 0 24 24" data-icon="mdi:plus" class="cc c iconify fs24 iconify--mdi">
+            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6z"></path>
+          </svg>
+        </div>
+
+      </div>
+      <div class="col bg-skew pv15 btn" onclick="zoomOut()">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em"
+            viewBox="0 0 24 24" data-icon="mdi:minus" class="cc c iconify fs24 iconify--mdi">
+            <path fill="currentColor" d="M19 13H5v-2h14z"></path>
+          </svg>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row f-grow">
+      <div class="line"></div>
+    </div>
+    <div class="row">
+      <div class="col bg-skew pv15 btn active" onclick="clearZoom()">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em"
+            viewBox="0 0 24 24" data-icon="mdi:play" class="cc c iconify fs26 iconify--mdi">
+            <path fill="currentColor" d="M8 5.14v14l11-7z"></path>
+          </svg>
+        </div>
+
+      </div>
+      <div class="col bg-skew pv15 btn" onclick="zoomIn()">
+        <div class="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="1em" height="1em"
+            viewBox="0 0 24 24" data-icon="mdi:account-circle" class="cc c iconify fs20 iconify--mdi">
+            <path fill="currentColor"
+              d="M12 19.2c-2.5 0-4.71-1.28-6-3.2c.03-2 4-3.1 6-3.1s5.97 1.1 6 3.1a7.23 7.23 0 0 1-6 3.2M12 5a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0-3A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10c0-5.53-4.5-10-10-10">
+            </path>
+          </svg>
+        </div>
+
+      </div>
+  </nav>
+
+  <div id="map"></div>
+
+  <script>
+    let map;
+    const zoomLevel = 5
+    function initMap() {
+      // Define the map options
+      const mapOptions = {
+        zoom: zoomLevel,  // Adjusted for better visibility of multiple markers
+        center: { lat: 56.130366, lng: -106.346771 }, // Center map on canada
+        zoomControl: false,        // Hides zoom control icons
+        fullscreenControl: false,  // Hides full-screen control
+        streetViewControl: false,  // Hides Street View Pegman
+        mapTypeControl: false,     // Hides the Map/Satellite control
+      };
+
+      // Create a map object and attach it to the 'map' div
+      map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+      // Array of marker locations
+      const markers = [
+        { position: { lat: 45.421530, lng: -75.697193 }, title: 'Ottawa', content: 'Capital of Canada' },
+        { position: { lat: 43.653225, lng: -79.383186 }, title: 'Toronto', content: 'Largest city in Canada' },
+        { position: { lat: 49.282729, lng: -123.120738 }, title: 'Vancouver', content: 'Major west coast city' },
+        { position: { lat: 51.044733, lng: -114.071883 }, title: 'Calgary', content: 'City in Alberta' },
+        { position: { lat: 52.455918, lng: -113.321875 }, title: 'Edmonton', content: 'Capital of Alberta' },
+        { position: { lat: 46.813878, lng: -71.207977 }, title: 'Quebec City', content: 'Historic city' },
+        { position: { lat: 43.731548, lng: -79.370187 }, title: 'Mississauga', content: 'City in Ontario' },
+        { position: { lat: 45.501688, lng: -73.567256 }, title: 'Montreal', content: 'Largest city in Quebec' },
+      ];
+
+      const infoWindow = new google.maps.InfoWindow();
+      // Add markers to the map
+      markers.forEach(markerData => {
+        const marker = new google.maps.Marker({
+          position: markerData.position,
+          map: map,
+          title: markerData.title,
+        });
+        // Add click event to each marker to open the info window
+        marker.addListener('click', () => {
+          infoWindow.setContent(`<div class='content'><h3>${markerData.title}</h3><p>${markerData.content}</p></div>`);
+          infoWindow.open(map, marker);
+        });
+      });
+    }
+    function zoomIn() {
+      map.setZoom(map.getZoom() + 1);
+    }
+    function zoomOut() {
+      map.setZoom(map.getZoom() - 1);
+    }
+    function clearZoom() {
+      map.setZoom(zoomLevel);
+    }
+
+
+
+  </script>
+
+</body>
+
+</html>
