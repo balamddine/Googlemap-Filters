@@ -6,7 +6,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800;900&display=swap"
     rel="stylesheet" />
 
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHCZL8-tj4nbu4e9LSmY4J8vIvYwIz_nw&callback=initMap"
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHCZL8-tj4nbu4e9LSmY4J8vIvYwIz_nw&libraries=marker,places&callback=initMap"
     async defer></script>
 
 
@@ -139,70 +140,71 @@
     .f-grow {
       flex-grow: 1;
     }
-    
+
 
     .gm-style .gm-style-iw-tc::after {
-        background-color: rgba(255, 255, 255, 0.8) !important;
+      background-color: rgba(255, 255, 255, 0.8) !important;
     }
 
     .gm-style .gm-style-iw-c {
-        background-color: rgba(255, 255, 255, 0.8) !important;
-        border-radius: 0px;
-        padding: 0px !important;
-        box-shadow: 0 2px 7px 1px #aabc9add !important;
-        height: 450px !important;
-        max-height: 450px !important;
-        min-width: 300px !important;      
+      background-color: rgba(255, 255, 255, 0.8) !important;
+      border-radius: 0px;
+      padding: 0px !important;
+      box-shadow: 0 2px 7px 1px #aabc9add !important;
+      height: 450px !important;
+      max-height: 450px !important;
+      min-width: 300px !important;
     }
 
 
     .gm-style .gm-style-iw-d {
-        overflow: hidden !important;
-        max-height: none !important;
+      overflow: hidden !important;
+      max-height: none !important;
     }
 
     .gm-style .gm-style-iw-c button {
-        z-index: 111;
-        width: auto !important;
-        height: auto !important;
-        padding: 0px !important;
-        opacity: 1 !important;
-        top: 0px !important;
-        right: 0px !important;
-        background-color: transparent !important;
-        /* color: #008d54 !important; */
+      z-index: 111;
+      width: auto !important;
+      height: auto !important;
+      padding: 0px !important;
+      opacity: 1 !important;
+      top: 0px !important;
+      right: 0px !important;
+      background-color: transparent !important;
+      /* color: #008d54 !important; */
     }
 
     .gm-style .gm-style-iw-c button span {
-        background-color: #008d54 !important;
+      background-color: #008d54 !important;
     }
 
 
 
     .marker-cluster-small {
-        background-color: rgba(181, 226, 140, 0.6);
+      background-color: rgba(181, 226, 140, 0.6);
     }
 
     .marker-cluster-small div {
-        background-color: rgba(110, 204, 57, 0.6);
+      background-color: rgba(110, 204, 57, 0.6);
     }
 
     .marker-cluster-medium {
-        background-color: rgba(241, 211, 87, 0.6);
+      background-color: rgba(241, 211, 87, 0.6);
     }
 
     .marker-cluster-medium div {
-        background-color: rgba(240, 194, 12, 0.6);
+      background-color: rgba(240, 194, 12, 0.6);
     }
 
     .marker-cluster-large {
-        background-color: rgba(253, 156, 115, 0.6);
+      background-color: rgba(253, 156, 115, 0.6);
     }
 
     .marker-cluster-large div {
-        background-color: rgba(241, 128, 23, 0.6);
+      background-color: rgba(241, 128, 23, 0.6);
     }
-    .content{
+
+    .content {
       padding: 10px;
     }
   </style>
@@ -284,6 +286,7 @@
         fullscreenControl: false,  // Hides full-screen control
         streetViewControl: false,  // Hides Street View Pegman
         mapTypeControl: false,     // Hides the Map/Satellite control
+        mapId: "1304eb0a3c6e547d"
       };
 
       // Create a map object and attach it to the 'map' div
@@ -301,16 +304,34 @@
         { position: { lat: 45.501688, lng: -73.567256 }, title: 'Montreal', content: 'Largest city in Quebec' },
       ];
 
+
+
+
       const infoWindow = new google.maps.InfoWindow();
       // Add markers to the map
       markers.forEach(markerData => {
-        const marker = new google.maps.Marker({
-          position: markerData.position,
-          map: map,
-          title: markerData.title,
+
+        const pinBackground = new google.maps.marker.PinElement({
+          borderColor: "#000",
+          background: "#000",
+          glyphColor: "#fff",
+          scale: 0.7
         });
+        const marker = new google.maps.marker.AdvancedMarkerElement({
+          map,
+          title: markerData.title,
+          position: markerData.position,
+          content: pinBackground.element,
+        });
+        // const marker = new google.maps.Marker({
+        //   position: markerData.position,
+        //   map: map,
+        //   title: markerData.title,
+        //   icon:customMarker
+        // });
         // Add click event to each marker to open the info window
         marker.addListener('click', () => {
+          infoWindow.close();
           infoWindow.setContent(`<div class='content'><h3>${markerData.title}</h3><p>${markerData.content}</p></div>`);
           infoWindow.open(map, marker);
         });
